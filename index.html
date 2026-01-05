@@ -1,0 +1,1626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Civil Service Review Tracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #fce7f3 0%, #e9d5ff 50%, #dbeafe 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .flower-icon {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            margin-bottom: 15px;
+        }
+
+        .flower {
+            width: 40px;
+            height: 40px;
+            background: #c084fc;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .flower-center {
+            width: 20px;
+            height: 20px;
+            background: #fbbf24;
+            border-radius: 50%;
+        }
+
+        .flower.small {
+            width: 25px;
+            height: 25px;
+        }
+
+        .flower.small .flower-center {
+            width: 12px;
+            height: 12px;
+        }
+
+        h1 {
+            font-size: 3em;
+            color: #f9a8d4;
+            font-family: cursive;
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            font-size: 1.5em;
+            color: #f9a8d4;
+            font-family: cursive;
+        }
+
+        .countdown-box {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .countdown-left h3 {
+            color: #c084fc;
+            font-family: cursive;
+            font-size: 1.3em;
+            margin-bottom: 5px;
+        }
+
+        .countdown-left p {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .countdown-right {
+            text-align: right;
+        }
+
+        .exam-date {
+            color: #86efac;
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+        .days-left {
+            color: #f9a8d4;
+            font-size: 2.5em;
+            font-weight: bold;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            position: relative;
+        }
+
+        .nav-tab {
+            background: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            color: #666;
+        }
+
+        .nav-tab:hover {
+            background: #fce7f3;
+        }
+
+        .nav-tab.active {
+            background: #f9a8d4;
+            color: white;
+        }
+
+        .view {
+            display: none;
+        }
+
+        .view.active {
+            display: block;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .card h2 {
+            color: #f9a8d4;
+            font-family: cursive;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .stat-box {
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .stat-box.pink { background: #fce7f3; }
+        .stat-box.purple { background: #e9d5ff; }
+        .stat-box.yellow { background: #fef9c3; }
+        .stat-box.green { background: #d1fae5; }
+
+        .stat-label {
+            font-size: 0.9em;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .stat-value {
+            font-size: 2.5em;
+            font-weight: bold;
+        }
+
+        .pink .stat-label, .pink .stat-value { color: #ec4899; }
+        .purple .stat-label, .purple .stat-value { color: #a855f7; }
+        .yellow .stat-label, .yellow .stat-value { color: #ca8a04; }
+        .green .stat-label, .green .stat-value { color: #22c55e; }
+
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .category-card {
+            border: 2px solid #fce7f3;
+            border-radius: 15px;
+            padding: 20px;
+        }
+
+        .category-tag {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .tag-verbal { background: #fce7f3; color: #ec4899; }
+        .tag-numerical { background: #dbeafe; color: #3b82f6; }
+        .tag-analytical { background: #fef9c3; color: #ca8a04; }
+        .tag-clerical { background: #d1fae5; color: #22c55e; }
+        .tag-general { background: #e9d5ff; color: #a855f7; }
+
+        .progress-bar {
+            width: 100%;
+            height: 12px;
+            background: #e5e7eb;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #f9a8d4, #c084fc);
+            transition: width 0.3s;
+        }
+
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .progress-percent {
+            font-size: 2em;
+            font-weight: bold;
+            color: #666;
+        }
+
+        .progress-count {
+            font-size: 0.9em;
+            color: #999;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th {
+            background: #fce7f3;
+            color: #ec4899;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #fce7f3;
+        }
+
+        tr:hover {
+            background: #fef9f9;
+        }
+
+        select, input[type="number"] {
+            padding: 5px 10px;
+            border: 2px solid #fce7f3;
+            border-radius: 8px;
+            font-size: 0.9em;
+        }
+
+        .status-not-started { background: #fef9c3; color: #ca8a04; padding: 5px 12px; border-radius: 15px; font-weight: 600; }
+        .status-in-progress { background: #e9d5ff; color: #a855f7; padding: 5px 12px; border-radius: 15px; font-weight: 600; }
+        .status-completed { background: #fce7f3; color: #ec4899; padding: 5px 12px; border-radius: 15px; font-weight: 600; }
+
+        .priority-high { color: #ec4899; font-weight: 600; }
+        .priority-medium { color: #a855f7; font-weight: 600; }
+        .priority-low { color: #22c55e; font-weight: 600; }
+
+        .btn {
+            background: #f9a8d4;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            background: #ec4899;
+            transform: translateY(-2px);
+        }
+
+        .btn-purple {
+            background: #c084fc;
+        }
+
+        .btn-purple:hover {
+            background: #a855f7;
+        }
+
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .test-item {
+            border: 2px solid #fce7f3;
+            border-radius: 12px;
+            padding: 15px;
+        }
+
+        .test-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+        }
+
+        .test-score {
+            font-size: 2em;
+            font-weight: bold;
+            color: #f9a8d4;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .techniques-box {
+            background: linear-gradient(135deg, #fce7f3, #e9d5ff);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .techniques-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .technique-item {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .technique-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .technique-title.pink { color: #ec4899; }
+        .technique-title.purple { color: #a855f7; }
+        .technique-title.blue { color: #3b82f6; }
+        .technique-title.green { color: #22c55e; }
+
+        .technique-desc {
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .donut-chart {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .donut-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .donut-percent {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #f9a8d4;
+        }
+
+        .donut-label {
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
+            
+            .countdown-box {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .countdown-right {
+                margin-top: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="flower-icon">
+                <div class="flower small">
+                    <div class="flower-center"></div>
+                </div>
+                <div class="flower">
+                    <div class="flower-center"></div>
+                </div>
+                <div class="flower small">
+                    <div class="flower-center"></div>
+                </div>
+            </div>
+            <h1>Civil Service</h1>
+            <div class="subtitle">REVIEW TRACKER</div>
+        </div>
+
+        <!-- Countdown -->
+        <div class="countdown-box">
+            <div class="countdown-left">
+                <h3>Days Left:</h3>
+                <p>Countdown to your exam date, be alert!</p>
+            </div>
+            <div class="countdown-right">
+                <div class="exam-date">March 8, 2026</div>
+                <div class="days-left" id="daysLeft">--</div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="nav-tabs" style="position: relative;">
+            <button class="nav-tab active" onclick="switchView('dashboard')">Dashboard</button>
+            <button class="nav-tab" onclick="switchView('topics')">Topics</button>
+            <button class="nav-tab" onclick="switchView('practice')">Practice</button>
+            <button class="nav-tab" onclick="switchView('study')">Study</button>
+            <button class="nav-tab" onclick="switchView('daily')">Daily</button>
+            <button class="nav-tab" onclick="switchView('weekly')">Weekly</button>
+            <button class="nav-tab" onclick="switchView('monthly')">Monthly</button>
+        </div>
+
+        <!-- Dashboard View -->
+        <div id="dashboard" class="view active">
+            <div class="card">
+                <h2>Status Overview</h2>
+                <div class="stats-grid">
+                    <div class="stat-box pink">
+                        <div class="stat-label">Completed</div>
+                        <div class="stat-value" id="statCompleted">0</div>
+                    </div>
+                    <div class="stat-box purple">
+                        <div class="stat-label">In Progress</div>
+                        <div class="stat-value" id="statInProgress">0</div>
+                    </div>
+                    <div class="stat-box yellow">
+                        <div class="stat-label">Not Started</div>
+                        <div class="stat-value" id="statNotStarted">19</div>
+                    </div>
+                    <div class="stat-box green">
+                        <div class="stat-label">Total Topics</div>
+                        <div class="stat-value">19</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Progress by Category</h2>
+                <div class="category-grid" id="categoryProgress">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Overall Review Progress</h2>
+                <div style="text-align: center;">
+                    <svg class="donut-chart" viewBox="0 0 200 200">
+                        <circle cx="100" cy="100" r="80" fill="none" stroke="#f3e8ff" stroke-width="16"/>
+                        <circle id="progressCircle" cx="100" cy="100" r="80" fill="none" stroke="#f9a8d4" stroke-width="16" 
+                                stroke-dasharray="502.4" stroke-dashoffset="502.4" transform="rotate(-90 100 100)"/>
+                    </svg>
+                    <div class="donut-center">
+                        <div class="donut-percent" id="overallPercent">0%</div>
+                        <div class="donut-label">Complete</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Topics View -->
+        <div id="topics" class="view">
+            <div class="card">
+                <h2>Review Topics</h2>
+                <div style="overflow-x: auto;">
+                    <table id="topicsTable">
+                        <thead>
+                            <tr>
+                                <th>Topic</th>
+                                <th>Category</th>
+                                <th>Status</th>
+                                <th>Priority</th>
+                                <th>Progress</th>
+                                <th>Last Reviewed</th>
+                            </tr>
+                        </thead>
+                        <tbody id="topicsBody">
+                            <!-- Will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Practice View -->
+        <div id="practice" class="view">
+            <div class="test-grid">
+                <div class="card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h2 style="margin: 0;">Practice Tests</h2>
+                        <button class="btn" onclick="addPracticeTest()">Add Test</button>
+                    </div>
+                    <div id="practiceTestsList">
+                        <div class="empty-state">No practice tests yet</div>
+                    </div>
+                    <div id="practiceAvg" style="display: none; margin-top: 20px; padding: 20px; background: #fce7f3; border-radius: 12px;">
+                        <div style="font-size: 0.9em; color: #666; margin-bottom: 5px;">Average Score</div>
+                        <div style="font-size: 2.5em; font-weight: bold; color: #f9a8d4;" id="practiceAvgValue">0%</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h2 style="margin: 0;">Mock Exams</h2>
+                        <button class="btn btn-purple" onclick="addMockExam()">Add Exam</button>
+                    </div>
+                    <div id="mockExamsList">
+                        <div class="empty-state">No mock exams yet</div>
+                    </div>
+                    <div id="mockAvg" style="display: none; margin-top: 20px; padding: 20px; background: #e9d5ff; border-radius: 12px;">
+                        <div style="font-size: 0.9em; color: #666; margin-bottom: 5px;">Average Score</div>
+                        <div style="font-size: 2.5em; font-weight: bold; color: #a855f7;" id="mockAvgValue">0%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Study View -->
+        <div id="study" class="view">
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2 style="margin: 0;">Study Sessions</h2>
+                    <button class="btn" onclick="addStudySession()">Add Session</button>
+                </div>
+
+                <div class="techniques-box">
+                    <h3 style="color: #a855f7; margin-bottom: 10px;">📚 Recommended Study Techniques</h3>
+                    <div class="techniques-grid">
+                        <div class="technique-item">
+                            <div class="technique-title pink">Pomodoro Technique</div>
+                            <div class="technique-desc">25 min study + 5 min break</div>
+                        </div>
+                        <div class="technique-item">
+                            <div class="technique-title purple">Active Recall</div>
+                            <div class="technique-desc">Test yourself regularly</div>
+                        </div>
+                        <div class="technique-item">
+                            <div class="technique-title blue">Spaced Repetition</div>
+                            <div class="technique-desc">Review at increasing intervals</div>
+                        </div>
+                        <div class="technique-item">
+                            <div class="technique-title green">Feynman Method</div>
+                            <div class="technique-desc">Explain concepts simply</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="studySessionsList">
+                    <div class="empty-state">No study sessions logged yet</div>
+                </div>
+
+                <div id="studyStats" style="display: none; margin-top: 30px;">
+                    <div class="stats-grid">
+                        <div class="stat-box pink">
+                            <div class="stat-label">Total Hours</div>
+                            <div class="stat-value" id="totalHours">0h</div>
+                        </div>
+                        <div class="stat-box purple">
+                            <div class="stat-label">Sessions</div>
+                            <div class="stat-value" id="totalSessions">0</div>
+                        </div>
+                        <div class="stat-box blue">
+                            <div class="stat-label">Avg per Session</div>
+                            <div class="stat-value" id="avgHours">0h</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Daily Schedule View -->
+        <div id="daily" class="view">
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <div>
+                        <h2 style="margin: 0;">Daily Schedule</h2>
+                        <p style="color: #666; margin-top: 5px;" id="dailyDate"></p>
+                    </div>
+                    <button class="btn" onclick="addDailyTask()">Add Task</button>
+                </div>
+
+                <div class="techniques-box" style="margin-bottom: 20px;">
+                    <h3 style="color: #a855f7; margin-bottom: 10px;">📋 Today's Summary</h3>
+                    <div class="stats-grid">
+                        <div class="stat-box pink">
+                            <div class="stat-label">Tasks</div>
+                            <div class="stat-value" id="dailyTaskCount">0</div>
+                        </div>
+                        <div class="stat-box green">
+                            <div class="stat-label">Completed</div>
+                            <div class="stat-value" id="dailyCompleted">0</div>
+                        </div>
+                        <div class="stat-box purple">
+                            <div class="stat-label">Study Hours</div>
+                            <div class="stat-value" id="dailyHours">0h</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="dailyTasksList">
+                    <div class="empty-state">No tasks scheduled for today</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Weekly Schedule View -->
+        <div id="weekly" class="view">
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <div>
+                        <h2 style="margin: 0;">Weekly Planner</h2>
+                        <p style="color: #666; margin-top: 5px;" id="weekRange"></p>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn" onclick="previousWeek()">← Prev</button>
+                        <button class="btn" onclick="nextWeek()">Next →</button>
+                    </div>
+                </div>
+
+                <div class="techniques-box" style="margin-bottom: 20px;">
+                    <h3 style="color: #a855f7; margin-bottom: 15px;">🎯 Weekly Goals</h3>
+                    <div style="background: white; padding: 15px; border-radius: 10px;">
+                        <div style="margin-bottom: 10px;">
+                            <strong>Topics to Complete:</strong>
+                            <input type="number" id="weeklyTopicGoal" value="5" style="width: 60px; margin-left: 10px;" onchange="saveWeeklyGoals()">
+                        </div>
+                        <div style="margin-bottom: 10px;">
+                            <strong>Practice Tests:</strong>
+                            <input type="number" id="weeklyTestGoal" value="3" style="width: 60px; margin-left: 10px;" onchange="saveWeeklyGoals()">
+                        </div>
+                        <div>
+                            <strong>Study Hours Target:</strong>
+                            <input type="number" id="weeklyHourGoal" value="30" style="width: 60px; margin-left: 10px;" onchange="saveWeeklyGoals()">
+                        </div>
+                    </div>
+                </div>
+
+                <div style="overflow-x: auto;">
+                    <table style="min-width: 900px;">
+                        <thead>
+                            <tr>
+                                <th style="width: 100px;">Time</th>
+                                <th>Monday</th>
+                                <th>Tuesday</th>
+                                <th>Wednesday</th>
+                                <th>Thursday</th>
+                                <th>Friday</th>
+                                <th>Saturday</th>
+                                <th>Sunday</th>
+                            </tr>
+                        </thead>
+                        <tbody id="weeklySchedule">
+                            <!-- Will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div style="margin-top: 20px;">
+                    <button class="btn" onclick="addWeeklyEvent()">Add Event</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Monthly Calendar View -->
+        <div id="monthly" class="view">
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <div>
+                        <h2 style="margin: 0;">Monthly Calendar</h2>
+                        <p style="color: #666; margin-top: 5px;" id="monthName"></p>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn" onclick="previousMonth()">← Prev</button>
+                        <button class="btn" onclick="nextMonth()">Next →</button>
+                    </div>
+                </div>
+
+                <div class="techniques-box" style="margin-bottom: 20px;">
+                    <h3 style="color: #a855f7; margin-bottom: 15px;">📊 Monthly Goals</h3>
+                    <div style="background: white; padding: 15px; border-radius: 10px;">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                            <div>
+                                <label style="display: block; margin-bottom: 5px;"><strong>Topics to Complete:</strong></label>
+                                <input type="number" id="monthlyTopicGoal" value="15" style="width: 100%;" onchange="saveMonthlyGoals()">
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 5px;"><strong>Mock Exams:</strong></label>
+                                <input type="number" id="monthlyExamGoal" value="2" style="width: 100%;" onchange="saveMonthlyGoals()">
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 5px;"><strong>Study Hours:</strong></label>
+                                <input type="number" id="monthlyHourGoal" value="120" style="width: 100%;" onchange="saveMonthlyGoals()">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%;">
+                        <thead>
+                            <tr style="background: #fce7f3;">
+                                <th>Sun</th>
+                                <th>Mon</th>
+                                <th>Tue</th>
+                                <th>Wed</th>
+                                <th>Thu</th>
+                                <th>Fri</th>
+                                <th>Sat</th>
+                            </tr>
+                        </thead>
+                        <tbody id="monthlyCalendar">
+                            <!-- Will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div style="margin-top: 20px;">
+                    <button class="btn" onclick="addMonthlyEvent()">Add Event to Calendar</button>
+                </div>
+
+                <div style="margin-top: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <div style="width: 20px; height: 20px; background: #fce7f3; border-radius: 4px;"></div>
+                        <span>Study Day</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <div style="width: 20px; height: 20px; background: #fef9c3; border-radius: 4px;"></div>
+                        <span>Test Day</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <div style="width: 20px; height: 20px; background: #d1fae5; border-radius: 4px;"></div>
+                        <span>Rest Day</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <div style="width: 20px; height: 20px; background: #e9d5ff; border-radius: 4px;"></div>
+                        <span>Mock Exam</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    <script>
+        // Database Configuration
+        const DB_NAME = '__csetracker_db__';
+        const DB_VERSION = 1;
+        let db = null;
+
+        // Initialize IndexedDB
+        function initDatabase() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open(DB_NAME, DB_VERSION);
+
+                request.onerror = () => reject(request.error);
+                request.onsuccess = () => {
+                    db = request.result;
+                    resolve(db);
+                };
+
+                request.onupgradeneeded = (event) => {
+                    db = event.target.result;
+
+                    // Create object stores (tables)
+                    if (!db.objectStoreNames.contains('topics')) {
+                        db.createObjectStore('topics', { keyPath: 'id' });
+                    }
+                    if (!db.objectStoreNames.contains('practiceTests')) {
+                        db.createObjectStore('practiceTests', { keyPath: 'id' });
+                    }
+                    if (!db.objectStoreNames.contains('mockExams')) {
+                        db.createObjectStore('mockExams', { keyPath: 'id' });
+                    }
+                    if (!db.objectStoreNames.contains('studySessions')) {
+                        db.createObjectStore('studySessions', { keyPath: 'id' });
+                    }
+                    if (!db.objectStoreNames.contains('dailyTasks')) {
+                        db.createObjectStore('dailyTasks', { keyPath: 'id' });
+                    }
+                    if (!db.objectStoreNames.contains('weeklyEvents')) {
+                        db.createObjectStore('weeklyEvents', { keyPath: 'key' });
+                    }
+                    if (!db.objectStoreNames.contains('monthlyEvents')) {
+                        db.createObjectStore('monthlyEvents', { keyPath: 'dateKey' });
+                    }
+                    if (!db.objectStoreNames.contains('settings')) {
+                        db.createObjectStore('settings', { keyPath: 'key' });
+                    }
+                };
+            });
+        }
+
+        // Database helper functions
+        function saveToDatabase(storeName, data) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction([storeName], 'readwrite');
+                const store = transaction.objectStore(storeName);
+                
+                if (Array.isArray(data)) {
+                    // Save multiple items
+                    data.forEach(item => store.put(item));
+                } else {
+                    // Save single item
+                    store.put(data);
+                }
+
+                transaction.oncomplete = () => resolve();
+                transaction.onerror = () => reject(transaction.error);
+            });
+        }
+
+        function loadFromDatabase(storeName) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction([storeName], 'readonly');
+                const store = transaction.objectStore(storeName);
+                const request = store.getAll();
+
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        function deleteFromDatabase(storeName, key) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction([storeName], 'readwrite');
+                const store = transaction.objectStore(storeName);
+                const request = store.delete(key);
+
+                request.onsuccess = () => resolve();
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        function clearStore(storeName) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction([storeName], 'readwrite');
+                const store = transaction.objectStore(storeName);
+                const request = store.clear();
+
+                request.onsuccess = () => resolve();
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        // Data storage
+        let topics = [
+            { id: 1, name: 'Word Meaning', category: 'Verbal Ability', status: 'Not Started', priority: 'High', progress: 0, lastReviewed: '' },
+            { id: 2, name: 'Sentence Completion', category: 'Verbal Ability', status: 'Not Started', priority: 'High', progress: 0, lastReviewed: '' },
+            { id: 3, name: 'Error Recognition', category: 'Verbal Ability', status: 'Not Started', priority: 'High', progress: 0, lastReviewed: '' },
+            { id: 4, name: 'Sentence Structure', category: 'Verbal Ability', status: 'Not Started', priority: 'High', progress: 0, lastReviewed: '' },
+            { id: 5, name: 'Paragraph Organization', category: 'Verbal Ability', status: 'Not Started', priority: 'Medium', progress: 0, lastReviewed: '' },
+            { id: 6, name: 'Reading Comprehension', category: 'Verbal Ability', status: 'Not Started', priority: 'High', progress: 0, lastReviewed: '' },
+            { id: 7, name: 'Basic Operations', category: 'Numerical Ability', status: 'Not Started', priority: 'High', progress: 0, lastReviewed: '' },
+            { id: 8, name: 'Number Sequence', category: 'Numerical Ability', status: 'Not Started', priority: 'Medium', progress: 0, lastReviewed: '' },
+            { id: 9, name: 'Word Problems', category: 'Numerical Ability', status: 'Not Started', priority: 'High', progress: 0, lastReviewed: '' },
+            { id: 10, name: 'Word Analogy', category: 'Analytical Ability', status: 'Not Started', priority: 'Medium', progress: 0, lastReviewed: '' },
+            { id: 11, name: 'Symbolic Logic/Abstract Reasoning', category: 'Analytical Ability', status: 'Not Started', priority: 'High', progress: 0, lastReviewed: '' },
+            { id: 12, name: 'Identifying Assumptions & Drawing Conclusions', category: 'Analytical Ability', status: 'Not Started', priority: 'High', progress: 0, lastReviewed: '' },
+            { id: 13, name: 'Data Interpretation', category: 'Analytical Ability', status: 'Not Started', priority: 'High', progress: 0, lastReviewed: '' },
+            { id: 14, name: 'Filing', category: 'Clerical Ability', status: 'Not Started', priority: 'Low', progress: 0, lastReviewed: '' },
+            { id: 15, name: 'Spelling', category: 'Clerical Ability', status: 'Not Started', priority: 'Medium', progress: 0, lastReviewed: '' },
+            { id: 16, name: 'Philippine Constitution', category: 'General Information', status: 'Not Started', priority: 'High', progress: 0, lastReviewed: '' },
+            { id: 17, name: 'Code of Conduct (R.A. 6713)', category: 'General Information', status: 'Not Started', priority: 'High', progress: 0, lastReviewed: '' },
+            { id: 18, name: 'Peace and Human Rights', category: 'General Information', status: 'Not Started', priority: 'Medium', progress: 0, lastReviewed: '' },
+            { id: 19, name: 'Environment Management', category: 'General Information', status: 'Not Started', priority: 'Medium', progress: 0, lastReviewed: '' }
+        ];
+
+        let practiceTests = [];
+        let mockExams = [];
+        let studySessions = [];
+
+        // New schedule data
+        let dailyTasks = [];
+        let weeklyEvents = {};
+        let monthlyEvents = {};
+        let currentWeekStart = new Date();
+        let currentMonth = new Date();
+        let weeklyGoals = { topics: 5, tests: 3, hours: 30 };
+        let monthlyGoals = { topics: 15, exams: 2, hours: 120 };
+
+        // Load data from database
+        async function loadData() {
+            try {
+                // Try loading from IndexedDB first
+                const loadedTopics = await loadFromDatabase('topics');
+                if (loadedTopics.length > 0) {
+                    topics = loadedTopics;
+                }
+
+                practiceTests = await loadFromDatabase('practiceTests');
+                mockExams = await loadFromDatabase('mockExams');
+                studySessions = await loadFromDatabase('studySessions');
+                dailyTasks = await loadFromDatabase('dailyTasks');
+
+                // Load weekly events
+                const weeklyEventsArray = await loadFromDatabase('weeklyEvents');
+                weeklyEvents = {};
+                weeklyEventsArray.forEach(item => {
+                    weeklyEvents[item.key] = item.value;
+                });
+
+                // Load monthly events
+                const monthlyEventsArray = await loadFromDatabase('monthlyEvents');
+                monthlyEvents = {};
+                monthlyEventsArray.forEach(item => {
+                    monthlyEvents[item.dateKey] = item.value;
+                });
+
+                // Load settings
+                const settings = await loadFromDatabase('settings');
+                settings.forEach(setting => {
+                    if (setting.key === 'weeklyGoals') weeklyGoals = setting.value;
+                    if (setting.key === 'monthlyGoals') monthlyGoals = setting.value;
+                });
+
+            } catch (error) {
+                console.log('Loading from database failed, checking localStorage:', error);
+                // Fallback to localStorage if database fails
+                const saved = localStorage.getItem('civilServiceTracker');
+                if (saved) {
+                    const data = JSON.parse(saved);
+                    topics = data.topics || topics;
+                    practiceTests = data.practiceTests || [];
+                    mockExams = data.mockExams || [];
+                    studySessions = data.studySessions || [];
+                    dailyTasks = data.dailyTasks || [];
+                    weeklyEvents = data.weeklyEvents || {};
+                    monthlyEvents = data.monthlyEvents || {};
+                    weeklyGoals = data.weeklyGoals || weeklyGoals;
+                    monthlyGoals = data.monthlyGoals || monthlyGoals;
+
+                    // Migrate to database
+                    await saveData();
+                }
+            }
+        }
+
+        // Save data to database
+        async function saveData() {
+            try {
+                // Save topics
+                await saveToDatabase('topics', topics);
+
+                // Save tests and sessions
+                await saveToDatabase('practiceTests', practiceTests);
+                await saveToDatabase('mockExams', mockExams);
+                await saveToDatabase('studySessions', studySessions);
+                await saveToDatabase('dailyTasks', dailyTasks);
+
+                // Save weekly events
+                const weeklyEventsArray = Object.keys(weeklyEvents).map(key => ({
+                    key: key,
+                    value: weeklyEvents[key]
+                }));
+                await clearStore('weeklyEvents');
+                if (weeklyEventsArray.length > 0) {
+                    await saveToDatabase('weeklyEvents', weeklyEventsArray);
+                }
+
+                // Save monthly events
+                const monthlyEventsArray = Object.keys(monthlyEvents).map(dateKey => ({
+                    dateKey: dateKey,
+                    value: monthlyEvents[dateKey]
+                }));
+                await clearStore('monthlyEvents');
+                if (monthlyEventsArray.length > 0) {
+                    await saveToDatabase('monthlyEvents', monthlyEventsArray);
+                }
+
+                // Save settings
+                await saveToDatabase('settings', [
+                    { key: 'weeklyGoals', value: weeklyGoals },
+                    { key: 'monthlyGoals', value: monthlyGoals }
+                ]);
+
+                // Also keep localStorage backup
+                localStorage.setItem('civilServiceTracker', JSON.stringify({
+                    topics, practiceTests, mockExams, studySessions,
+                    dailyTasks, weeklyEvents, monthlyEvents, weeklyGoals, monthlyGoals
+                }));
+
+                console.log('Data saved to database: __csetracker_db__');
+            } catch (error) {
+                console.error('Error saving to database:', error);
+            }
+        }
+
+        // Calculate days left
+        function updateCountdown() {
+            const examDate = new Date('2026-03-08');
+            const today = new Date();
+            const diff = examDate - today;
+            const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
+            document.getElementById('daysLeft').textContent = days + ' days';
+        }
+
+        // Switch views
+        function switchView(viewName) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+            
+            document.getElementById(viewName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Update statistics
+        function updateStats() {
+            const completed = topics.filter(t => t.status === 'Completed').length;
+            const inProgress = topics.filter(t => t.status === 'In Progress').length;
+            const notStarted = topics.filter(t => t.status === 'Not Started').length;
+            
+            document.getElementById('statCompleted').textContent = completed;
+            document.getElementById('statInProgress').textContent = inProgress;
+            document.getElementById('statNotStarted').textContent = notStarted;
+            
+            const percent = ((completed / topics.length) * 100).toFixed(1);
+            document.getElementById('overallPercent').textContent = percent + '%';
+            
+            const circumference = 502.4;
+            const offset = circumference - (completed / topics.length) * circumference;
+            document.getElementById('progressCircle').style.strokeDashoffset = offset;
+        }
+
+        // Update category progress
+        function updateCategoryProgress() {
+            const categories = {};
+            topics.forEach(t => {
+                if (!categories[t.category]) {
+                    categories[t.category] = { total: 0, completed: 0 };
+                }
+                categories[t.category].total++;
+                if (t.status === 'Completed') categories[t.category].completed++;
+            });
+
+            const categoryColors = {
+                'Verbal Ability': 'tag-verbal',
+                'Numerical Ability': 'tag-numerical',
+                'Analytical Ability': 'tag-analytical',
+                'Clerical Ability': 'tag-clerical',
+                'General Information': 'tag-general'
+            };
+
+            const html = Object.entries(categories).map(([cat, data]) => {
+                const percent = ((data.completed / data.total) * 100).toFixed(1);
+                return `
+                    <div class="category-card">
+                        <div class="category-tag ${categoryColors[cat]}">${cat}</div>
+                        <div class="progress-text">
+                            <span class="progress-percent">${percent}%</span>
+                            <span class="progress-count">${data.completed}/${data.total}</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${percent}%"></div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('categoryProgress').innerHTML = html;
+        }
+
+        // Render topics table
+        function renderTopics() {
+            const html = topics.map(topic => {
+                const categoryClass = {
+                    'Verbal Ability': 'tag-verbal',
+                    'Numerical Ability': 'tag-numerical',
+                    'Analytical Ability': 'tag-analytical',
+                    'Clerical Ability': 'tag-clerical',
+                    'General Information': 'tag-general'
+                }[topic.category];
+
+                return `
+                    <tr>
+                        <td><strong>${topic.name}</strong></td>
+                        <td><span class="category-tag ${categoryClass}">${topic.category}</span></td>
+                        <td>
+                            <select onchange="updateStatus(${topic.id}, this.value)" class="status-${topic.status.toLowerCase().replace(' ', '-')}">
+                                <option ${topic.status === 'Not Started' ? 'selected' : ''}>Not Started</option>
+                                <option ${topic.status === 'In Progress' ? 'selected' : ''}>In Progress</option>
+                                <option ${topic.status === 'Completed' ? 'selected' : ''}>Completed</option>
+                            </select>
+                        </td>
+                        <td class="priority-${topic.priority.toLowerCase()}">${topic.priority}</td>
+                        <td>
+                            <input type="number" min="0" max="100" value="${topic.progress}" 
+                                   onchange="updateProgress(${topic.id}, this.value)"
+                                   style="width: 60px;"> %
+                        </td>
+                        <td>${topic.lastReviewed || '-'}</td>
+                    </tr>
+                `;
+            }).join('');
+            document.getElementById('topicsBody').innerHTML = html;
+        }
+
+        // Update topic status
+        function updateStatus(id, status) {
+            const topic = topics.find(t => t.id === id);
+            topic.status = status;
+            topic.lastReviewed = new Date().toLocaleDateString();
+            saveData();
+            renderTopics();
+            updateStats();
+            updateCategoryProgress();
+        }
+
+        // Update topic progress
+        function updateProgress(id, progress) {
+            const topic = topics.find(t => t.id === id);
+            topic.progress = Math.min(100, Math.max(0, parseInt(progress)));
+            saveData();
+        }
+
+        // Add practice test
+        function addPracticeTest() {
+            const topic = prompt('Enter topic name:');
+            const score = prompt('Enter score (0-100):');
+            if (topic && score) {
+                practiceTests.push({
+                    id: Date.now(),
+                    date: new Date().toLocaleDateString(),
+                    topic: topic,
+                    score: parseInt(score)
+                });
+                saveData();
+                renderPracticeTests();
+            }
+        }
+
+        // Render practice tests
+        function renderPracticeTests() {
+            if (practiceTests.length === 0) {
+                document.getElementById('practiceTestsList').innerHTML = '<div class="empty-state">No practice tests yet</div>';
+                document.getElementById('practiceAvg').style.display = 'none';
+                return;
+            }
+
+            const html = practiceTests.map(test => `
+                <div class="test-item">
+                    <div class="test-header">
+                        <div>
+                            <div style="font-weight: 600; margin-bottom: 5px;">${test.topic}</div>
+                            <div style="font-size: 0.9em; color: #666;">${test.date}</div>
+                        </div>
+                        <div class="test-score">${test.score}%</div>
+                    </div>
+                </div>
+            `).join('');
+
+            document.getElementById('practiceTestsList').innerHTML = html;
+
+            const avg = (practiceTests.reduce((sum, t) => sum + t.score, 0) / practiceTests.length).toFixed(1);
+            document.getElementById('practiceAvgValue').textContent = avg + '%';
+            document.getElementById('practiceAvg').style.display = 'block';
+        }
+
+        // Add mock exam
+        function addMockExam() {
+            const score = prompt('Enter mock exam score (0-100):');
+            if (score) {
+                mockExams.push({
+                    id: Date.now(),
+                    date: new Date().toLocaleDateString(),
+                    score: parseInt(score)
+                });
+                saveData();
+                renderMockExams();
+            }
+        }
+
+        // Render mock exams
+        function renderMockExams() {
+            if (mockExams.length === 0) {
+                document.getElementById('mockExamsList').innerHTML = '<div class="empty-state">No mock exams yet</div>';
+                document.getElementById('mockAvg').style.display = 'none';
+                return;
+            }
+
+            const html = mockExams.map(exam => `
+                <div class="test-item">
+                    <div class="test-header">
+                        <div>
+                            <div style="font-weight: 600; margin-bottom: 5px;">Mock Exam</div>
+                            <div style="font-size: 0.9em; color: #666;">${exam.date}</div>
+                        </div>
+                        <div class="test-score" style="color: #a855f7;">${exam.score}%</div>
+                    </div>
+                </div>
+            `).join('');
+
+            document.getElementById('mockExamsList').innerHTML = html;
+
+            const avg = (mockExams.reduce((sum, e) => sum + e.score, 0) / mockExams.length).toFixed(1);
+            document.getElementById('mockAvgValue').textContent = avg + '%';
+            document.getElementById('mockAvg').style.display = 'block';
+        }
+
+        // Add study session
+        function addStudySession() {
+            const topic = prompt('Enter topic studied:');
+            const hours = prompt('Enter hours spent:');
+            if (topic && hours) {
+                studySessions.push({
+                    id: Date.now(),
+                    date: new Date().toLocaleDateString(),
+                    topic: topic,
+                    hours: parseFloat(hours)
+                });
+                saveData();
+                renderStudySessions();
+            }
+        }
+
+        // Render study sessions
+        function renderStudySessions() {
+            if (studySessions.length === 0) {
+                document.getElementById('studySessionsList').innerHTML = '<div class="empty-state">No study sessions logged yet</div>';
+                document.getElementById('studyStats').style.display = 'none';
+                return;
+            }
+
+            const html = studySessions.map(session => `
+                <div class="test-item">
+                    <div class="test-header">
+                        <div>
+                            <div style="font-weight: 600; font-size: 1.1em; margin-bottom: 5px;">${session.topic}</div>
+                            <div style="font-size: 0.9em; color: #666;">${session.date}</div>
+                        </div>
+                        <div class="test-score">${session.hours}h</div>
+                    </div>
+                </div>
+            `).join('');
+
+            document.getElementById('studySessionsList').innerHTML = html;
+
+            const totalHours = studySessions.reduce((sum, s) => sum + s.hours, 0);
+            const avgHours = totalHours / studySessions.length;
+
+            document.getElementById('totalHours').textContent = totalHours.toFixed(1) + 'h';
+            document.getElementById('totalSessions').textContent = studySessions.length;
+            document.getElementById('avgHours').textContent = avgHours.toFixed(1) + 'h';
+            document.getElementById('studyStats').style.display = 'block';
+        }
+
+        // Daily Schedule Functions
+        function addDailyTask() {
+            const time = prompt('Enter time (e.g., 9:00 AM):');
+            const task = prompt('Enter task:');
+            const hours = prompt('Enter estimated hours:');
+            if (time && task) {
+                const today = new Date().toDateString();
+                dailyTasks.push({
+                    id: Date.now(),
+                    date: today,
+                    time: time,
+                    task: task,
+                    hours: parseFloat(hours) || 0,
+                    completed: false
+                });
+                saveData();
+                renderDailySchedule();
+            }
+        }
+
+        function renderDailySchedule() {
+            const today = new Date().toDateString();
+            const todayTasks = dailyTasks.filter(t => t.date === today);
+            
+            document.getElementById('dailyDate').textContent = new Date().toLocaleDateString('en-US', { 
+                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
+            });
+
+            if (todayTasks.length === 0) {
+                document.getElementById('dailyTasksList').innerHTML = '<div class="empty-state">No tasks scheduled for today</div>';
+                document.getElementById('dailyTaskCount').textContent = '0';
+                document.getElementById('dailyCompleted').textContent = '0';
+                document.getElementById('dailyHours').textContent = '0h';
+                return;
+            }
+
+            const html = todayTasks.map(task => `
+                <div class="test-item" style="${task.completed ? 'opacity: 0.6;' : ''}">
+                    <div style="display: flex; justify-content: space-between; align-items: start;">
+                        <div style="flex: 1;">
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                                <input type="checkbox" ${task.completed ? 'checked' : ''} 
+                                       onchange="toggleDailyTask(${task.id})"
+                                       style="width: 20px; height: 20px; cursor: pointer;">
+                                <strong style="font-size: 1.1em;">${task.time}</strong>
+                            </div>
+                            <div style="font-size: 1.1em; ${task.completed ? 'text-decoration: line-through;' : ''}">${task.task}</div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div class="test-score" style="font-size: 1.5em;">${task.hours}h</div>
+                            <button onclick="deleteDailyTask(${task.id})" 
+                                    style="background: none; border: none; color: #ec4899; cursor: pointer; font-size: 0.9em;">
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            document.getElementById('dailyTasksList').innerHTML = html;
+
+            const completed = todayTasks.filter(t => t.completed).length;
+            const totalHours = todayTasks.filter(t => t.completed).reduce((sum, t) => sum + t.hours, 0);
+
+            document.getElementById('dailyTaskCount').textContent = todayTasks.length;
+            document.getElementById('dailyCompleted').textContent = completed;
+            document.getElementById('dailyHours').textContent = totalHours.toFixed(1) + 'h';
+        }
+
+        function toggleDailyTask(id) {
+            const task = dailyTasks.find(t => t.id === id);
+            if (task) {
+                task.completed = !task.completed;
+                saveData();
+                renderDailySchedule();
+            }
+        }
+
+        function deleteDailyTask(id) {
+            dailyTasks = dailyTasks.filter(t => t.id !== id);
+            deleteFromDatabase('dailyTasks', id);
+            saveData();
+            renderDailySchedule();
+        }
+
+        // Weekly Schedule Functions
+        function getWeekDates(startDate) {
+            const dates = [];
+            for (let i = 0; i < 7; i++) {
+                const date = new Date(startDate);
+                date.setDate(startDate.getDate() + i);
+                dates.push(date);
+            }
+            return dates;
+        }
+
+        function renderWeeklySchedule() {
+            const weekDates = getWeekDates(currentWeekStart);
+            const startStr = weekDates[0].toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            const endStr = weekDates[6].toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+            document.getElementById('weekRange').textContent = `${startStr} - ${endStr}`;
+
+            const times = ['6:00 AM', '8:00 AM', '10:00 AM', '12:00 PM', '2:00 PM', '4:00 PM', '6:00 PM', '8:00 PM'];
+            
+            let html = times.map(time => {
+                let row = `<tr><td><strong>${time}</strong></td>`;
+                weekDates.forEach(date => {
+                    const dateKey = date.toDateString();
+                    const timeKey = `${dateKey}_${time}`;
+                    const event = weeklyEvents[timeKey] || '';
+                    row += `<td onclick="editWeeklyCell('${timeKey}')" style="cursor: pointer; min-height: 60px; ${event ? 'background: #fce7f3;' : ''}">${event}</td>`;
+                });
+                row += '</tr>';
+                return row;
+            }).join('');
+
+            document.getElementById('weeklySchedule').innerHTML = html;
+
+            // Load goals
+            document.getElementById('weeklyTopicGoal').value = weeklyGoals.topics;
+            document.getElementById('weeklyTestGoal').value = weeklyGoals.tests;
+            document.getElementById('weeklyHourGoal').value = weeklyGoals.hours;
+        }
+
+        function editWeeklyCell(key) {
+            const currentValue = weeklyEvents[key] || '';
+            const newValue = prompt('Enter event (or leave empty to clear):', currentValue);
+            if (newValue !== null) {
+                if (newValue.trim() === '') {
+                    delete weeklyEvents[key];
+                } else {
+                    weeklyEvents[key] = newValue;
+                }
+                saveData();
+                renderWeeklySchedule();
+            }
+        }
+
+        function addWeeklyEvent() {
+            const day = prompt('Enter day (Monday, Tuesday, etc.):');
+            const time = prompt('Enter time (e.g., 9:00 AM):');
+            const event = prompt('Enter event:');
+            
+            if (day && time && event) {
+                const weekDates = getWeekDates(currentWeekStart);
+                const dayIndex = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
+                    .indexOf(day.toLowerCase());
+                
+                if (dayIndex !== -1) {
+                    const date = weekDates[dayIndex];
+                    const key = `${date.toDateString()}_${time}`;
+                    weeklyEvents[key] = event;
+                    saveData();
+                    renderWeeklySchedule();
+                } else {
+                    alert('Invalid day. Please use full day names like Monday, Tuesday, etc.');
+                }
+            }
+        }
+
+        function previousWeek() {
+            currentWeekStart.setDate(currentWeekStart.getDate() - 7);
+            renderWeeklySchedule();
+        }
+
+        function nextWeek() {
+            currentWeekStart.setDate(currentWeekStart.getDate() + 7);
+            renderWeeklySchedule();
+        }
+
+        function saveWeeklyGoals() {
+            weeklyGoals = {
+                topics: parseInt(document.getElementById('weeklyTopicGoal').value),
+                tests: parseInt(document.getElementById('weeklyTestGoal').value),
+                hours: parseInt(document.getElementById('weeklyHourGoal').value)
+            };
+            saveData();
+        }
+
+        // Monthly Calendar Functions
+        function renderMonthlyCalendar() {
+            const year = currentMonth.getFullYear();
+            const month = currentMonth.getMonth();
+            
+            document.getElementById('monthName').textContent = new Date(year, month).toLocaleDateString('en-US', { 
+                month: 'long', year: 'numeric' 
+            });
+
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            
+            let html = '';
+            let day = 1;
+            
+            for (let week = 0; week < 6; week++) {
+                html += '<tr>';
+                for (let dayOfWeek = 0; dayOfWeek < 7; dayOfWeek++) {
+                    if ((week === 0 && dayOfWeek < firstDay) || day > daysInMonth) {
+                        html += '<td style="background: #f3f4f6;"></td>';
+                    } else {
+                        const date = new Date(year, month, day);
+                        const dateKey = date.toDateString();
+                        const event = monthlyEvents[dateKey] || {};
+                        const isToday = date.toDateString() === new Date().toDateString();
+                        
+                        let bgColor = '#fff';
+                        if (event.type === 'study') bgColor = '#fce7f3';
+                        else if (event.type === 'test') bgColor = '#fef9c3';
+                        else if (event.type === 'rest') bgColor = '#d1fae5';
+                        else if (event.type === 'exam') bgColor = '#e9d5ff';
+                        
+                        html += `<td onclick="editMonthlyDay('${dateKey}')" 
+                                     style="cursor: pointer; padding: 10px; height: 80px; vertical-align: top; background: ${bgColor}; ${isToday ? 'border: 3px solid #f9a8d4;' : 'border: 1px solid #e5e7eb;'}">
+                                    <div style="font-weight: bold; ${isToday ? 'color: #f9a8d4;' : ''}">${day}</div>
+                                    <div style="font-size: 0.8em; margin-top: 5px;">${event.title || ''}</div>
+                                </td>`;
+                        day++;
+                    }
+                }
+                html += '</tr>';
+                if (day > daysInMonth) break;
+            }
+
+            document.getElementById('monthlyCalendar').innerHTML = html;
+
+            // Load goals
+            document.getElementById('monthlyTopicGoal').value = monthlyGoals.topics;
+            document.getElementById('monthlyExamGoal').value = monthlyGoals.exams;
+            document.getElementById('monthlyHourGoal').value = monthlyGoals.hours;
+        }
+
+        function editMonthlyDay(dateKey) {
+            const current = monthlyEvents[dateKey] || {};
+            const title = prompt('Enter event title (or leave empty to clear):', current.title || '');
+            
+            if (title !== null) {
+                if (title.trim() === '') {
+                    delete monthlyEvents[dateKey];
+                } else {
+                    const type = prompt('Enter type (study/test/rest/exam):', current.type || 'study');
+                    monthlyEvents[dateKey] = { title, type };
+                }
+                saveData();
+                renderMonthlyCalendar();
+            }
+        }
+
+        function addMonthlyEvent() {
+            const day = prompt('Enter day of month (1-31):');
+            const title = prompt('Enter event title:');
+            const type = prompt('Enter type (study/test/rest/exam):');
+            
+            if (day && title && type) {
+                const date = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), parseInt(day));
+                const dateKey = date.toDateString();
+                monthlyEvents[dateKey] = { title, type };
+                saveData();
+                renderMonthlyCalendar();
+            }
+        }
+
+        function previousMonth() {
+            currentMonth.setMonth(currentMonth.getMonth() - 1);
+            renderMonthlyCalendar();
+        }
+
+        function nextMonth() {
+            currentMonth.setMonth(currentMonth.getMonth() + 1);
+            renderMonthlyCalendar();
+        }
+
+        function saveMonthlyGoals() {
+            monthlyGoals = {
+                topics: parseInt(document.getElementById('monthlyTopicGoal').value),
+                exams: parseInt(document.getElementById('monthlyExamGoal').value),
+                hours: parseInt(document.getElementById('monthlyHourGoal').value)
+            };
+            saveData();
+        }
+
+        // Initialize weekly schedule to start on Monday
+        function getMonday(d) {
+            d = new Date(d);
+            const day = d.getDay();
+            const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+            return new Date(d.setDate(diff));
+        }
+
+        // Initialize
+        async function initialize() {
+            try {
+                // Initialize database
+                await initDatabase();
+                console.log('Database initialized: __csetracker_db__');
+
+                // Load data
+                await loadData();
+                
+                // Render UI
+                updateCountdown();
+                updateStats();
+                updateCategoryProgress();
+                renderTopics();
+                renderPracticeTests();
+                renderMockExams();
+                renderStudySessions();
+                
+                // Initialize schedules
+                currentWeekStart = getMonday(new Date());
+                renderDailySchedule();
+                renderWeeklySchedule();
+                renderMonthlyCalendar();
+
+                console.log('Civil Service Tracker initialized successfully!');
+            } catch (error) {
+                console.error('Initialization error:', error);
+                alert('Error initializing tracker. Please refresh the page.');
+            }
+        }
+
+        // Start the app
+        initialize();
+    </script>
+</body>
+</html>
